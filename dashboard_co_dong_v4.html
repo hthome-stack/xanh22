@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Xe Ghép — Báo Cáo Cổ Đông (Online)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bl:#1a56db;--bll:#e8f0fe;--gr:#16a34a;--grl:#dcfce7;--rd:#dc2626;--rdl:#fee2e2;--or:#ea580c;--orl:#ffedd5;--pu:#7c3aed;--pul:#ede9fe;--gy:#6b7280;--gyl:#f9fafb;--bd:#e5e7eb;--tx:#111827;--t2:#6b7280;--wh:#fff;--xanh:#1F7A4D;--r:12px;--rs:8px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;color:var(--tx);min-height:100vh}
+#lw{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#1F3864,#7c3aed)}
+.lb{background:#fff;border-radius:20px;padding:28px;width:100%;max-width:380px;text-align:center}
+.ll{font-size:52px;margin-bottom:6px}.lt{font-size:21px;font-weight:700;margin-bottom:4px}.ls{font-size:13px;color:var(--gy);margin-bottom:24px;line-height:1.5}
+.lf label{display:block;font-size:13px;font-weight:500;color:var(--t2);margin-bottom:5px;text-align:left}
+.lf input{width:100%;padding:12px 14px;border:1.5px solid var(--bd);border-radius:var(--rs);font-size:15px;font-family:inherit;margin-bottom:12px}
+.lf input:focus{outline:none;border-color:var(--bl);box-shadow:0 0 0 3px rgba(26,86,219,.1)}
+.lbtn{width:100%;padding:14px;background:var(--bl);color:#fff;border:none;border-radius:var(--rs);font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.lerr{color:var(--rd);font-size:13px;margin-top:8px;display:none}.lnote{font-size:12px;color:var(--gy);margin-top:16px;padding:10px;background:var(--gyl);border-radius:var(--rs);line-height:1.6}
+#aw{display:none}
+.topbar{background:#1F3864;color:#fff;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.tbb{display:flex;align-items:center;gap:9px}.tblog{font-size:22px}.tbi .tbt{font-size:15px;font-weight:700}.tbi .tbs{font-size:11px;opacity:.75}
+.tbr{display:flex;align-items:center;gap:7px}.tbu{background:rgba(255,255,255,.18);border-radius:20px;padding:4px 11px;font-size:12px;font-weight:600}
+.tlbt{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:8px;padding:5px 11px;font-size:12px;cursor:pointer;font-family:inherit}
+.tabs{display:flex;background:#fff;border-bottom:1.5px solid var(--bd);overflow-x:auto;position:sticky;top:57px;z-index:99}.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;min-width:68px;padding:11px 6px;text-align:center;font-size:12px;font-weight:500;color:var(--gy);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tab.active{color:var(--bl);border-bottom-color:var(--bl)}
+.pg{display:none;padding:14px;animation:fi .2s}.pg.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.hero{background:linear-gradient(135deg,#1F3864,#7c3aed);border-radius:var(--r);padding:18px;margin-bottom:12px;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:'🚗';position:absolute;right:14px;bottom:-10px;font-size:60px;opacity:.12}
+.hlbl{font-size:11px;opacity:.75;font-weight:600;text-transform:uppercase;letter-spacing:.07em}
+.hval{font-size:30px;font-weight:800;margin:5px 0;line-height:1}.hnote{font-size:12px;opacity:.8}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}
+.sc{background:#fff;border-radius:var(--rs);border:1px solid var(--bd);padding:12px}
+.sl{font-size:11px;color:var(--gy);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.sv{font-size:20px;font-weight:700;line-height:1.1}
+.slbl{font-size:11px;font-weight:700;color:var(--gy);text-transform:uppercase;letter-spacing:.08em;margin:14px 0 7px}
+.card{background:#fff;border-radius:var(--r);border:1px solid var(--bd);padding:14px;margin-bottom:10px}
+.ir{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--gyl);font-size:13px}
+.ir:last-child{border:none}.il{color:var(--t2)}.iv{font-weight:600;text-align:right}
+.pos{color:var(--gr);font-weight:700}.neg{color:var(--rd);font-weight:700}
+.mt{width:100%;border-collapse:collapse;font-size:13px}
+.mt th{background:var(--gyl);padding:8px 9px;text-align:center;font-weight:600;font-size:12px;border-bottom:1.5px solid var(--bd)}
+.mt td{padding:9px;border-bottom:1px solid var(--gyl);text-align:right}.mt td:first-child{text-align:left;font-weight:500}
+.mt tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.bg{background:var(--grl);color:var(--gr)}.br{background:var(--rdl);color:var(--rd)}.bo{background:var(--orl);color:var(--or)}
+.pbar{height:8px;background:var(--gyl);border-radius:4px;overflow:hidden;margin-top:6px}.pbf{height:100%;border-radius:4px}
+.notice{background:var(--orl);border-radius:var(--rs);border:1px solid #fed7aa;padding:11px 13px;font-size:12px;color:#9a3412;line-height:1.6;margin-bottom:11px}
+.adm-sec{background:#fff;border-radius:var(--r);border:2px solid var(--or);padding:14px;margin-bottom:10px}
+.adm-tit{font-size:14px;font-weight:700;color:var(--or);margin-bottom:12px}
+.adm-row{display:flex;gap:8px;padding:9px 0;border-bottom:1px solid var(--gyl);font-size:13px;align-items:center}
+.adm-row:last-child{border:none}.adm-lbl{flex:1;font-weight:500}.adm-pwd{font-family:monospace;background:var(--gyl);padding:3px 8px;border-radius:6px;font-size:13px}
+.ei{width:100%;padding:8px 10px;border:1.5px solid var(--bd);border-radius:6px;font-size:13px;font-family:inherit;margin-bottom:6px}
+.ei:focus{outline:none;border-color:var(--bl)}
+.bsm{padding:8px 16px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.bbl{background:var(--bl);color:#fff}.brd{background:var(--rd);color:#fff}.bgy{background:var(--gyl);color:var(--tx);border:1px solid var(--bd)}
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:flex-end}
+.mbg.open{display:flex}.modal{background:#fff;border-radius:20px 20px 0 0;width:100%;padding:20px 16px;max-height:85vh;overflow-y:auto}
+.mh{width:40px;height:4px;background:var(--bd);border-radius:2px;margin:0 auto 14px}.mtit{font-size:16px;font-weight:700;margin-bottom:14px}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e293b;color:#fff;padding:11px 20px;border-radius:24px;font-size:14px;font-weight:500;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;max-width:92vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div id="lw">
+  <div class="lb">
+    <div class="ll">📊</div>
+    <div class="lt">Báo Cáo Cổ Đông</div>
+    <div class="ls">Xe Ghép Tiện Chuyến<br>Số liệu thực tế 14/01 – 10/06/2026</div>
+    <div class="lf">
+      <label>Tên đăng nhập</label><input id="iu" placeholder="VD: HVH, TVH, HT hoặc admin" autocomplete="off">
+      <label>Mật khẩu</label><input id="ip" type="password" placeholder="Nhập mật khẩu" onkeydown="if(event.key==='Enter')login()">
+    </div>
+    <button class="lbtn" onclick="login()">Đăng nhập</button>
+    <div class="lerr" id="lerr">❌ Tên đăng nhập hoặc mật khẩu không đúng</div>
+    <div class="lnote">🔒 Cổ đông: chỉ xem | Admin: quản lý toàn bộ</div>
+  </div>
+</div>
+<div id="aw">
+  <div class="topbar">
+    <div class="tbb"><div class="tblog">🚗</div><div class="tbi"><div class="tbt">Xe Ghép Tiện Chuyến</div><div class="tbs" id="tbs">Báo cáo</div></div></div>
+    <div class="tbr"><div class="tbu" id="tbu"></div><button class="tlbt" onclick="logout()">Đăng xuất</button></div>
+  </div>
+  <div id="srcBadge" onclick="loadRemote()" style="display:none;font-size:11px;text-align:center;padding:5px;background:#e8f0fe;color:#1a56db;cursor:pointer"></div>
+  <div class="tabs" id="tabBar"></div>
+  <div id="tabContent"></div>
+</div>
+<div class="mbg" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal"><div class="mh"></div><div id="modalBody"></div></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const SK='cdv3_sess';
+
+// ═══ ĐỒNG BỘ GOOGLE SHEET ═══════════════════════════════════════
+// DÁN link Web App (Apps Script) vào dòng dưới — xem HUONG_DAN_CAI_DAT.md
+const API_URL='https://script.google.com/macros/s/AKfycbyW2xacmXfcJayMgme1XyFUIuOkXhzhoWZY_vfAKv8JNq8O7Pw3xnKAPlb8-fLDlJU/exec';
+let REMOTE=null; // dữ liệu live từ Google Sheet
+function apiReady(){return API_URL.indexOf('https://')===0}
+function setSrc(msg,ok){
+  const el=document.getElementById('srcBadge');if(!el)return;
+  el.style.display='block';el.textContent=msg;
+  el.style.background=ok?'#dcfce7':'#ffedd5';el.style.color=ok?'#16a34a':'#ea580c';
+}
+async function loadRemote(){
+  if(!apiReady()){setSrc('⚠️ Chưa cấu hình API_URL — đang dùng số liệu trên máy',false);return}
+  setSrc('⏳ Đang tải từ Google Sheet...',true);
+  try{
+    const r=await fetch(API_URL+'?action=dashboard');
+    const j=await r.json();
+    if(!j.ok)throw new Error(j.error);
+    REMOTE=j;
+    setSrc('☁️ Số liệu trực tiếp từ Google Sheet — bấm để tải lại',true);
+    if(CU)buildTabs();
+  }catch(e){setSrc('📴 Không kết nối được — đang dùng số liệu trên máy, bấm để thử lại',false)}
+}
+function activeMonths(ms){
+  const c=ms.filter(m=>m.closed);
+  if(c.length)return c;
+  return ms.length>1?ms.slice(0,-1):ms;
+}
+function rangeLbl(act){return act.length?(act[0].label+'–'+act[act.length-1].label):''}
+// ════════════════════════════════════════════════════════════════
+const DEF_ACC=[
+  {user:'HVH',pass:'HVH@2026',name:'Hoàng Văn Huy',role:'shareholder',pct:0.13,capital:35000000,color:'#7c3aed'},
+  {user:'TVH',pass:'TVH@2026',name:'Trần Việt Hùng',role:'shareholder',pct:0.45,capital:121373000,color:'#1a56db'},
+  {user:'HT', pass:'HT@2026', name:'Hoàng Thạch',   role:'shareholder',pct:0.42,capital:113063000,color:'#16a34a'},
+  {user:'admin',pass:'Admin@XeGhep2026',name:'Quản trị viên',role:'admin',pct:null,capital:0,color:'#ea580c'},
+];
+function getAccs(){
+  if(REMOTE&&REMOTE.shareholders&&REMOTE.shareholders.length)
+    return REMOTE.shareholders.map(s=>({...s,role:'shareholder',pass:'(quản lý trong Google Sheet)'}));
+  return JSON.parse(localStorage.getItem('xg_accs_v3')||JSON.stringify(DEF_ACC));
+}
+function saveAccs(a){localStorage.setItem('xg_accs_v3',JSON.stringify(a))}
+
+// Business data — matching V5 Excel exactly
+// LN = DT_xe(60%) - CP_tháng
+const DEF_BIZ={
+  months:[
+    {m:1,label:'T1/2026',full:'Tháng 1/2026',days:18,trips:15,dt_thuc:13416200,dt_xe:8049720,lx:5366480,cp_vh:29500000,tg:0,cp_total:29500000,ln:-21450280,note:'14–31/01 (18 ngày vận hành đầu)'},
+    {m:2,label:'T2/2026',full:'Tháng 2/2026',days:28,trips:47,dt_thuc:39060880,dt_xe:23436528,lx:15624352,cp_vh:2560000,tg:28704000,cp_total:31264000,ln:-7827472,note:'Trả góp đầu tiên 05/02/2026'},
+    {m:3,label:'T3/2026',full:'Tháng 3/2026',days:31,trips:44,dt_thuc:43583040,dt_xe:26149824,lx:17433216,cp_vh:2600000,tg:28704000,cp_total:31304000,ln:-5154176,note:'Tăng giá vé từ 25/03'},
+    {m:4,label:'T4/2026',full:'Tháng 4/2026',days:30,trips:58,dt_thuc:58286000,dt_xe:34971600,lx:23314400,cp_vh:2204000,tg:28704000,cp_total:30908000,ln:4063600,note:'Tháng đầu tiên có lãi ✅'},
+    {m:5,label:'T5/2026',full:'Tháng 5/2026',days:31,trips:58,dt_thuc:66775480,dt_xe:40065288,lx:26710192,cp_vh:2226000,tg:28704000,cp_total:30930000,ln:9135288,note:''},
+    {m:6,label:'T6/2026',full:'Tháng 6/2026 (1–10/06)',days:10,trips:46,dt_thuc:56637240,dt_xe:33982344,lx:22654896,cp_vh:2200000,tg:28704000,cp_total:30904000,ln:3078344,note:'Tháng đang chạy — chưa kết thúc'},
+  ],
+  invest:{tong:269436000,vay_tong:1196000000,tg_thang:28704000,start:'14/01/2026',giaingaan:'08/01/2026',ngay_dong:'05 hàng tháng',xe1_vay:15192000,xe2_vay:13512000},
+  formula_note:'LN = DT Xe (60% × DT thực) − Tổng CP tháng (bảo dưỡng + BH + marketing + VP + trả góp NH)',
+};
+function getBiz(){
+  if(REMOTE)return{months:REMOTE.months,invest:REMOTE.invest,formula_note:REMOTE.formula_note||DEF_BIZ.formula_note};
+  return JSON.parse(localStorage.getItem('xg_biz_v3')||JSON.stringify(DEF_BIZ));
+}
+function saveBiz(d){localStorage.setItem('xg_biz_v3',JSON.stringify(d))}
+
+let CU=null;
+function fmt(n,s=false){n=Number(n||0);if(s){if(Math.abs(n)>=1e9)return(n/1e9).toFixed(1)+'tỷ';if(Math.abs(n)>=1e6)return(n/1e6).toFixed(1)+'tr';if(Math.abs(n)>=1e3)return(n/1e3).toFixed(0)+'k';return n+'đ';}return n.toLocaleString('vi-VN')+'đ'}
+function pct(n){return(n*100).toFixed(1)+'%'}
+function pnHtml(n,s=false){return n>=0?`<span class="pos">+${fmt(n,s)}</span>`:`<span class="neg">${fmt(n,s)}</span>`}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+function openModal(html){document.getElementById('modalBody').innerHTML=html;document.getElementById('modal').classList.add('open')}
+
+async function login(){
+  const u=document.getElementById('iu').value.trim();
+  const p=document.getElementById('ip').value.trim();
+  if(apiReady()){
+    try{
+      const r=await fetch(API_URL,{method:'POST',body:JSON.stringify({action:'login',user:u,pass:p})});
+      const j=await r.json();
+      if(j.ok){
+        CU={...j.account};sessionStorage.setItem(SK,JSON.stringify(CU));
+        document.getElementById('lerr').style.display='none';enterApp();return;
+      }
+      document.getElementById('lerr').style.display='block';document.getElementById('ip').value='';return;
+    }catch(e){/* mất mạng → kiểm tra tài khoản lưu trên máy */}
+  }
+  const acc=getAccs().find(a=>a.user===u&&a.pass===p);
+  if(!acc){document.getElementById('lerr').style.display='block';document.getElementById('ip').value='';return}
+  CU={...acc};sessionStorage.setItem(SK,JSON.stringify(CU));
+  document.getElementById('lerr').style.display='none';enterApp();
+}
+function logout(){CU=null;sessionStorage.removeItem(SK);document.getElementById('aw').style.display='none';document.getElementById('lw').style.display='flex';document.getElementById('iu').value='';document.getElementById('ip').value=''}
+function enterApp(){
+  document.getElementById('lw').style.display='none';document.getElementById('aw').style.display='block';
+  document.getElementById('tbu').textContent=CU.name;
+  document.getElementById('tbs').textContent=CU.role==='admin'?'Quản trị viên':'Cổ đông — Chỉ xem';
+  buildTabs();
+}
+
+function buildTabs(){
+  const isAdmin=CU.role==='admin';
+  const tabs=isAdmin
+    ?[{id:'tq',lbl:'📊 Tổng quan'},{id:'ct',lbl:'📅 Chi tiết'},{id:'cotuc',lbl:'👥 Cổ đông'},{id:'dau',lbl:'🏗️ Đầu tư'},{id:'adm',lbl:'⚙️ Admin'}]
+    :[{id:'tq',lbl:'📊 Tổng quan'},{id:'cotuc',lbl:'💰 Phần của tôi'},{id:'ct',lbl:'📅 Chi tiết'},{id:'dau',lbl:'🏗️ Đầu tư'}];
+  document.getElementById('tabBar').innerHTML=tabs.map((t,i)=>`<div class="tab${i===0?' active':''}" onclick="switchTab('${t.id}',this)">${t.lbl}</div>`).join('');
+  switchTab(tabs[0].id);
+}
+function switchTab(id,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  else{const found=document.querySelector(`[onclick*="'${id}'"]`);if(found)found.classList.add('active')}
+  const c=document.getElementById('tabContent');
+  const M={tq:renderTQ,ct:renderCT,cotuc:renderCotuc,dau:renderDau,adm:renderAdm};
+  if(M[id])c.innerHTML=M[id]();
+}
+
+function renderTQ(){
+  const B=getBiz(); const ms=B.months;
+  const active=activeMonths(ms); const RL=rangeLbl(active);
+  const totalLN=active.reduce((s,m)=>s+m.ln,0);
+  const totalDT=active.reduce((s,m)=>s+m.dt_thuc,0);
+  const totalDTXe=active.reduce((s,m)=>s+m.dt_xe,0);
+  const profitM=active.filter(m=>m.ln>0).length;
+  return `
+  <div class="hero">
+    <div class="hlbl">LN luỹ kế ${RL} (= DT Xe 60% − CP)</div>
+    <div class="hval" style="color:${totalLN>=0?'#86efac':'#fca5a5'}">${totalLN>=0?'+':''}${fmt(totalLN,true)}</div>
+    <div class="hnote">${active.reduce((s,m)=>s+m.trips,0)} chuyến · DT thực: ${fmt(totalDT,true)} · DT xe: ${fmt(totalDTXe,true)}</div>
+  </div>
+  <div class="sg">
+    <div class="sc"><div class="sl">Tổng DT thực ${RL}</div><div class="sv" style="color:var(--bl)">${fmt(totalDT,true)}</div></div>
+    <div class="sc"><div class="sl">DT xe 60% ${RL}</div><div class="sv" style="color:var(--xanh)">${fmt(totalDTXe,true)}</div></div>
+    <div class="sc"><div class="sl">Tháng có lãi</div><div class="sv" style="color:var(--gr)">${profitM}/${active.length}</div></div>
+    <div class="sc"><div class="sl">Trả góp/tháng</div><div class="sv" style="color:var(--or)">${fmt(28704000,true)}</div></div>
+  </div>
+  <div class="notice">📌 <strong>Công thức LN:</strong> ${B.formula_note}</div>
+  <div class="slbl">Kết quả từng tháng</div>
+  <div class="card">
+    <table class="mt"><thead><tr><th>Tháng</th><th>DT thực</th><th>DT xe 60%</th><th>CP tháng</th><th>LN ròng</th><th>Chuyến</th></tr></thead>
+    <tbody>${ms.map(m=>`<tr>
+      <td>${m.label}${m.note?`<br><span style="font-size:10px;color:var(--gy)">${m.note.substring(0,25)}${m.note.length>25?'...':''}</span>`:''}</td>
+      <td>${fmt(m.dt_thuc,true)}</td>
+      <td style="color:var(--xanh);font-weight:600">${fmt(m.dt_xe,true)}</td>
+      <td style="color:var(--rd)">${fmt(m.cp_total,true)}</td>
+      <td class="${m.ln>=0?'pos':'neg'}">${m.ln>=0?'+':''}${fmt(m.ln,true)}</td>
+      <td style="color:var(--gy)">${m.trips}</td>
+    </tr>`).join('')}</tbody></table>
+  </div>`;
+}
+
+function renderCotuc(){
+  const B=getBiz(); const ms=B.months; const accs=getAccs();
+  const isAdmin=CU.role==='admin';
+  const sh=accs.find(a=>a.user===CU.user);
+  const mp=sh?.pct||null; const mn=CU.name;
+  const active=activeMonths(ms); const RL=rangeLbl(active);
+  const totalLN=active.reduce((s,m)=>s+m.ln,0);
+  const myLN=mp?totalLN*mp:totalLN;
+  const q1=active.filter(m=>m.m<=3).reduce((s,m)=>s+m.ln,0);
+  const q2=active.filter(m=>m.m>=4&&m.m<=6).reduce((s,m)=>s+m.ln,0);
+  const shareholders=accs.filter(a=>a.role==='shareholder');
+  return `
+  <div class="card" style="background:linear-gradient(135deg,var(--pul),var(--bll));border-color:#c4b5fd">
+    <div style="font-size:15px;font-weight:700;margin-bottom:10px">👤 ${mn}</div>
+    ${mp?`<div class="ir"><div class="il">Tỷ lệ vốn</div><div class="iv">${pct(mp)}</div></div>
+    <div class="ir"><div class="il">Vốn góp</div><div class="iv">${fmt(sh.capital)}</div></div>`:''}
+    <div class="ir"><div class="il">LN luỹ kế ${RL}</div><div class="iv ${myLN>=0?'pos':'neg'}">${myLN>=0?'+':''}${fmt(myLN)}</div></div>
+    <div class="ir" style="border:none"><div class="il">TB/tháng</div><div class="iv ${myLN>=0?'pos':'neg'}">${(myLN/Math.max(active.length,1))>=0?'+':''}${fmt(myLN/Math.max(active.length,1),true)}</div></div>
+    ${mp?`<div style="margin-top:8px"><div style="font-size:11px;color:var(--gy);margin-bottom:4px">Tỷ lệ vốn</div><div class="pbar"><div class="pbf" style="width:${mp*100}%;background:${sh.color}"></div></div></div>`:''}
+  </div>
+  <div class="slbl">Phân chia từng tháng (LN × tỷ lệ %)</div>
+  <div class="card">
+    <table class="mt"><thead><tr><th>Tháng</th><th>LN doanh nghiệp</th><th>${mp?`Phần (${pct(mp)})`:'Tổng LN'}</th><th></th></tr></thead>
+    <tbody>${active.map(m=>{const my=mp?m.ln*mp:m.ln;return`<tr>
+      <td>${m.label}</td>
+      <td class="${m.ln>=0?'pos':'neg'}">${m.ln>=0?'+':''}${fmt(m.ln,true)}</td>
+      <td class="${my>=0?'pos':'neg'}">${my>=0?'+':''}${fmt(my)}</td>
+      <td><span class="badge ${m.ln>=0?'bg':'br'}">${m.ln>=0?'Lãi':'Lỗ'}</span></td>
+    </tr>`;}).join('')}</tbody></table>
+  </div>
+  <div class="slbl">Luỹ kế theo quý</div>
+  <div class="card">
+    <div class="ir"><div class="il">Q1 (T1–T3) — LN doanh nghiệp</div><div class="iv ${q1>=0?'pos':'neg'}">${q1>=0?'+':''}${fmt(q1)}</div></div>
+    ${mp?`<div class="ir"><div class="il">Q1 — Phần của ${mn}</div><div class="iv ${(q1*mp)>=0?'pos':'neg'}">${(q1*mp)>=0?'+':''}${fmt(q1*mp)}</div></div>`:''}
+    <div class="ir"><div class="il">Q2 (T4–T6)</div><div class="iv ${q2>=0?'pos':'neg'}">${q2>=0?'+':''}${fmt(q2)}</div></div>
+    ${mp?`<div class="ir"><div class="il">Q2 — Phần của ${mn}</div><div class="iv ${(q2*mp)>=0?'pos':'neg'}">${(q2*mp)>=0?'+':''}${fmt(q2*mp)}</div></div>`:''}
+    <div class="ir" style="border:none;font-weight:700"><div class="il">Luỹ kế ${active.length} tháng</div><div class="iv ${myLN>=0?'pos':'neg'}">${myLN>=0?'+':''}${fmt(myLN)}</div></div>
+  </div>
+  ${isAdmin?`<div class="slbl">Tất cả cổ đông</div><div class="card">
+    ${shareholders.map(s=>`<div class="ir"><div><div style="font-weight:600">${s.name}</div><div style="font-size:11px;color:var(--gy)">${pct(s.pct)} · Góp: ${fmt(s.capital,true)}</div></div>
+    <div style="text-align:right"><div class="${(totalLN*s.pct)>=0?'pos':'neg'}">${(totalLN*s.pct)>=0?'+':''}${fmt(totalLN*s.pct)}</div><div style="font-size:11px;color:var(--gy)">luỹ kế ${RL}</div></div></div>`).join('')}
+  </div>`:''}`;
+}
+
+function renderCT(){
+  const B=getBiz(); const ms=B.months;
+  return ms.map(m=>`
+  <div class="card" style="margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <div><div style="font-weight:700;font-size:15px">${m.full}</div>${m.note?`<div style="font-size:11px;color:var(--gy)">${m.note}</div>`:''}</div>
+      <span class="badge ${m.ln>=0?'bg':'br'}">${m.ln>=0?'Có lãi':'Lỗ'}</span>
+    </div>
+    <div class="ir"><div class="il">Doanh thu thực (tổng vé)</div><div class="iv" style="color:var(--bl)">${fmt(m.dt_thuc)}</div></div>
+    <div class="ir"><div class="il">DT Xe (60% × DT thực)</div><div class="iv" style="color:var(--xanh);font-weight:700">${fmt(m.dt_xe)}</div></div>
+    <div class="ir"><div class="il">Lương lái xe (40% × DT thực)</div><div class="iv">${fmt(m.lx)}</div></div>
+    <div class="ir"><div class="il">CP vận hành (BH, quảng cáo, VP...)</div><div class="iv" style="color:var(--rd)">−${fmt(m.cp_vh)}</div></div>
+    <div class="ir"><div class="il">Trả góp ngân hàng 2 xe</div><div class="iv" style="color:var(--rd)">−${fmt(m.tg)}</div></div>
+    <div class="ir"><div class="il">Tổng CP tháng</div><div class="iv" style="color:var(--rd);font-weight:700">−${fmt(m.cp_total)}</div></div>
+    <div class="ir" style="font-weight:700;font-size:14px;border-top:2px solid var(--bd);margin-top:4px;padding-top:10px;border-bottom:none">
+      <div>LN = DT xe 60% − CP tháng</div><div class="${m.ln>=0?'pos':'neg'}">${m.ln>=0?'+':''}${fmt(m.ln)}</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gy);margin-top:8px;padding-top:8px;border-top:1px solid var(--gyl)">
+      <span>🚗 ${m.trips} chuyến</span>
+      <span>DT/chuyến: ~${fmt(Math.round(m.dt_thuc/Math.max(m.trips,1)),true)}</span>
+      <span>Biên: ${(m.dt_xe>0?(m.ln/m.dt_xe*100).toFixed(0):0)}%</span>
+    </div>
+    ${CU.pct?`<div style="background:var(--pul);border-radius:var(--rs);padding:9px;margin-top:9px;font-size:13px">
+      <span style="color:var(--pu);font-weight:600">Phần của ${CU.name} (${pct(CU.pct)}):</span>
+      <span class="${(m.ln*CU.pct)>=0?'pos':'neg'}" style="float:right;font-weight:700">${(m.ln*CU.pct)>=0?'+':''}${fmt(m.ln*CU.pct)}</span>
+    </div>`:''}
+  </div>`).join('');
+}
+
+function renderDau(){
+  const B=getBiz(); const I=B.invest;
+  return `
+  <div class="slbl">Chi phí đầu tư ban đầu</div>
+  <div class="card">
+    <div class="ir"><div class="il">Xe 1 — 22H202555 (giá xe)</div><div class="iv">704,040,000đ</div></div>
+    <div class="ir"><div class="il">Xe 2 — 22H02470 (giá xe)</div><div class="iv">704,040,000đ</div></div>
+    <div class="ir"><div class="il">Đối ứng Xe 1</div><div class="iv">71,040,000đ</div></div>
+    <div class="ir"><div class="il">Đối ứng Xe 2</div><div class="iv">141,040,000đ</div></div>
+    <div class="ir"><div class="il">Phí ĐK, BHTNDS, BH thân vỏ, BH vay</div><div class="iv">56,756,000đ</div></div>
+    <div class="ir" style="font-weight:700"><div class="il">Tổng vốn đầu tư</div><div class="iv" style="color:var(--bl)">${fmt(I.tong)}</div></div>
+  </div>
+  <div class="slbl">Kế hoạch trả góp ngân hàng</div>
+  <div class="card">
+    <div class="ir"><div class="il">Xe 1 vay (22H202555)</div><div class="iv">633,000,000đ</div></div>
+    <div class="ir"><div class="il">Xe 2 vay (22H02470)</div><div class="iv">563,000,000đ</div></div>
+    <div class="ir"><div class="il">Ngày giải ngân</div><div class="iv">${I.giaingaan}</div></div>
+    <div class="ir"><div class="il">Bắt đầu vận hành</div><div class="iv">${I.start}</div></div>
+    <div class="ir"><div class="il">Ngày đóng tiền</div><div class="iv">${I.ngay_dong}</div></div>
+    <div class="ir"><div class="il">Lãi suất cố định (24 tháng)</div><div class="iv">8.8%/năm</div></div>
+    <div class="ir"><div class="il">Góp/tháng Xe 1</div><div class="iv" style="color:var(--or)">${fmt(I.xe1_vay)}</div></div>
+    <div class="ir"><div class="il">Góp/tháng Xe 2</div><div class="iv" style="color:var(--or)">${fmt(I.xe2_vay)}</div></div>
+    <div class="ir" style="font-weight:700"><div class="il">Tổng góp/tháng (2 xe)</div><div class="iv" style="color:var(--rd)">${fmt(I.tg_thang)}</div></div>
+  </div>
+  <div class="slbl">Vốn góp cổ đông</div>
+  <div class="card">
+    ${getAccs().filter(a=>a.role==='shareholder').map(s=>`<div class="ir">
+      <div><div style="font-weight:600">${s.name}</div><div style="font-size:11px;color:var(--gy)">Đăng nhập: ${s.user}</div></div>
+      <div style="text-align:right"><div style="font-weight:700">${pct(s.pct)}</div><div style="font-size:12px;color:var(--gy)">${fmt(s.capital,true)}</div></div>
+    </div>`).join('')}
+    <div class="ir" style="font-weight:700;border:none"><div class="il">Tổng vốn góp</div><div class="iv">${fmt(getAccs().filter(a=>a.role==='shareholder').reduce((s,a)=>s+a.capital,0))}</div></div>
+  </div>`;
+}
+
+function renderAdm(){
+  if(CU.role!=='admin')return '<div class="notice">Chỉ admin mới xem được trang này.</div>';
+  const accs=getAccs(); const B=getBiz();
+  return `
+  ${REMOTE?`<div class="notice">☁️ <strong>Dashboard đang lấy số liệu trực tiếp từ Google Sheet.</strong><br>
+  Muốn sửa: mở Google Sheet, sửa các sheet <strong>CHI_PHI</strong> (chi phí tháng), <strong>CO_DONG</strong> (tài khoản, tỷ lệ vốn), <strong>DAU_TU</strong> (thông tin đầu tư). Dữ liệu chuyến nằm ở sheet <strong>DATA</strong>.
+  ${REMOTE.sheetUrl?`<br><a href="${REMOTE.sheetUrl}" target="_blank" style="color:var(--bl);font-weight:600">📄 Mở Google Sheet →</a>`:''}
+  <br><span style="font-size:11px;color:var(--gy)">Các nút sửa bên dưới chỉ thay đổi dữ liệu lưu trên máy này (dùng khi offline).</span></div>`:''}
+  <div class="adm-sec">
+    <div class="adm-tit">⚙️ Quản lý tài khoản</div>
+    ${accs.map((a,i)=>`<div class="adm-row">
+      <div class="adm-lbl">${a.name}<br><span style="font-size:11px;color:var(--gy)">${a.user} · ${a.role==='admin'?'Admin':pct(a.pct||0)+' vốn'}</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><span class="adm-pwd">${a.pass}</span><button class="bsm bbl" onclick="editAcc(${i})">Sửa</button></div>
+    </div>`).join('')}
+    <div style="margin-top:10px"><button class="bsm bbl" onclick="addAcc()">+ Thêm tài khoản</button></div>
+  </div>
+  <div class="adm-sec">
+    <div class="adm-tit">📊 Cập nhật số liệu tháng</div>
+    ${B.months.map((m,i)=>`<div class="adm-row">
+      <div class="adm-lbl">${m.label}<br><span style="font-size:11px;color:${m.ln>=0?'var(--gr)':'var(--rd)'}">${m.ln>=0?'+':''}${fmt(m.ln,true)} LN</span></div>
+      <button class="bsm bbl" onclick="editMonth(${i})">Sửa</button>
+    </div>`).join('')}
+    <div style="margin-top:10px"><button class="bsm bbl" onclick="addMonth()">+ Thêm tháng</button></div>
+  </div>
+  <div class="adm-sec">
+    <div class="adm-tit">🔧 Backup & Restore</div>
+    <div class="adm-row"><div class="adm-lbl">Xuất dữ liệu (JSON)</div><button class="bsm bgy" onclick="exportD()">Xuất</button></div>
+    <div class="adm-row"><div class="adm-lbl">Nhập dữ liệu (JSON)</div><button class="bsm bgy" onclick="importD()">Nhập</button></div>
+    <div class="adm-row"><div class="adm-lbl">Reset về mặc định</div><button class="bsm brd" onclick="resetAll()">Reset</button></div>
+  </div>`;
+}
+
+// Admin functions
+function editAcc(i){const a=getAccs()[i];openModal(`<div class="mtit">Sửa tài khoản</div>
+  <input class="ei" id="ea-name" value="${a.name}" placeholder="Họ tên">
+  <input class="ei" id="ea-user" value="${a.user}" placeholder="Đăng nhập">
+  <input class="ei" id="ea-pass" value="${a.pass}" placeholder="Mật khẩu mới">
+  ${a.role==='shareholder'?`<input class="ei" id="ea-pct" value="${a.pct}" type="number" step="0.01" placeholder="Tỷ lệ (0.13=13%)">
+  <input class="ei" id="ea-cap" value="${a.capital}" type="number" placeholder="Vốn góp (VNĐ)">`:''}
+  <div style="display:flex;gap:8px"><button class="bsm bbl" style="flex:1" onclick="saveAcc(${i},${a.role==='shareholder'})">Lưu</button>
+  <button class="bsm brd" onclick="delAcc(${i})">Xoá</button><button class="bsm bgy" onclick="closeModal()">Huỷ</button></div>`);}
+function saveAcc(i,isSh){const accs=getAccs();accs[i].name=document.getElementById('ea-name').value;accs[i].user=document.getElementById('ea-user').value;accs[i].pass=document.getElementById('ea-pass').value;if(isSh){accs[i].pct=parseFloat(document.getElementById('ea-pct').value);accs[i].capital=parseInt(document.getElementById('ea-cap').value);}saveAccs(accs);closeModal();toast('✅ Đã lưu!');switchTab('adm');}
+function delAcc(i){if(confirm('Xoá tài khoản này?')){const a=getAccs();a.splice(i,1);saveAccs(a);closeModal();toast('🗑️ Đã xoá');switchTab('adm');}}
+function addAcc(){openModal(`<div class="mtit">Thêm tài khoản</div>
+  <input class="ei" id="na-n" placeholder="Họ tên"><input class="ei" id="na-u" placeholder="Đăng nhập">
+  <input class="ei" id="na-p" placeholder="Mật khẩu">
+  <select class="ei" id="na-r"><option value="shareholder">Cổ đông</option><option value="admin">Admin</option></select>
+  <input class="ei" id="na-pct" placeholder="Tỷ lệ % (0.15)" type="number" step="0.01">
+  <input class="ei" id="na-cap" placeholder="Vốn góp (VNĐ)" type="number">
+  <div style="display:flex;gap:8px"><button class="bsm bbl" style="flex:1" onclick="confirmAddAcc()">Thêm</button><button class="bsm bgy" onclick="closeModal()">Huỷ</button></div>`);}
+function confirmAddAcc(){const accs=getAccs();accs.push({user:document.getElementById('na-u').value,pass:document.getElementById('na-p').value,name:document.getElementById('na-n').value,role:document.getElementById('na-r').value,pct:parseFloat(document.getElementById('na-pct').value)||0,capital:parseInt(document.getElementById('na-cap').value)||0,color:'#6b7280'});saveAccs(accs);closeModal();toast('✅ Đã thêm!');switchTab('adm');}
+
+function editMonth(i){const m=getBiz().months[i];openModal(`<div class="mtit">Cập nhật ${m.label}</div>
+  <label style="font-size:12px;color:var(--t2)">DT thực</label><input class="ei" id="em-dttho" value="${m.dt_thuc}" type="number">
+  <label style="font-size:12px;color:var(--t2)">DT xe 60%</label><input class="ei" id="em-dtxe" value="${m.dt_xe}" type="number">
+  <label style="font-size:12px;color:var(--t2)">Lương LX 40%</label><input class="ei" id="em-lx" value="${m.lx}" type="number">
+  <label style="font-size:12px;color:var(--t2)">CP vận hành (không TG)</label><input class="ei" id="em-cpvh" value="${m.cp_vh}" type="number">
+  <label style="font-size:12px;color:var(--t2)">Trả góp NH</label><input class="ei" id="em-tg" value="${m.tg}" type="number">
+  <label style="font-size:12px;color:var(--t2)">Tổng CP (tự tính)</label><input class="ei" id="em-cptot" value="${m.cp_total}" type="number">
+  <label style="font-size:12px;color:var(--t2)">Lợi nhuận (= DT xe - CP total)</label><input class="ei" id="em-ln" value="${m.ln}" type="number">
+  <label style="font-size:12px;color:var(--t2)">Số chuyến</label><input class="ei" id="em-trips" value="${m.trips}" type="number">
+  <label style="font-size:12px;color:var(--t2)">Ghi chú</label><input class="ei" id="em-note" value="${m.note||''}">
+  <div style="display:flex;gap:8px"><button class="bsm bbl" style="flex:1" onclick="saveMonth(${i})">Lưu</button><button class="bsm bgy" onclick="closeModal()">Huỷ</button></div>`);}
+function saveMonth(i){const B=getBiz();B.months[i]={...B.months[i],dt_thuc:+document.getElementById('em-dttho').value,dt_xe:+document.getElementById('em-dtxe').value,lx:+document.getElementById('em-lx').value,cp_vh:+document.getElementById('em-cpvh').value,tg:+document.getElementById('em-tg').value,cp_total:+document.getElementById('em-cptot').value,ln:+document.getElementById('em-ln').value,trips:+document.getElementById('em-trips').value,note:document.getElementById('em-note').value};saveBiz(B);closeModal();toast('✅ Đã cập nhật!');switchTab('adm');}
+function addMonth(){const B=getBiz();const nx=B.months.length+1;openModal(`<div class="mtit">Thêm tháng T${nx}/2026</div>
+  <input class="ei" id="am-m" value="T${nx}/2026"><input class="ei" id="am-full" placeholder="Tên đầy đủ">
+  <input class="ei" id="am-dttho" placeholder="DT thực" type="number"><input class="ei" id="am-dtxe" placeholder="DT xe 60%" type="number">
+  <input class="ei" id="am-lx" placeholder="Lương LX 40%" type="number"><input class="ei" id="am-cpvh" placeholder="CP vận hành" type="number" value="2200000">
+  <input class="ei" id="am-tg" placeholder="Trả góp" type="number" value="28704000"><input class="ei" id="am-cptot" placeholder="Tổng CP" type="number">
+  <input class="ei" id="am-ln" placeholder="Lợi nhuận" type="number"><input class="ei" id="am-trips" placeholder="Số chuyến" type="number">
+  <div style="display:flex;gap:8px"><button class="bsm bbl" style="flex:1" onclick="confirmAddMonth()">Thêm</button><button class="bsm bgy" onclick="closeModal()">Huỷ</button></div>`);}
+function confirmAddMonth(){const B=getBiz();B.months.push({m:B.months.length+1,label:document.getElementById('am-m').value,full:document.getElementById('am-full').value,days:30,trips:+document.getElementById('am-trips').value,dt_thuc:+document.getElementById('am-dttho').value,dt_xe:+document.getElementById('am-dtxe').value,lx:+document.getElementById('am-lx').value,cp_vh:+document.getElementById('am-cpvh').value,tg:+document.getElementById('am-tg').value,cp_total:+document.getElementById('am-cptot').value,ln:+document.getElementById('am-ln').value,note:''});saveBiz(B);closeModal();toast('✅ Thêm thành công!');switchTab('adm');}
+
+function exportD(){const blob=new Blob([JSON.stringify({accs:getAccs(),biz:getBiz()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='xeghep_backup.json';a.click();toast('⬇️ Đã xuất file')}
+function importD(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.accs)saveAccs(d.accs);if(d.biz)saveBiz(d.biz);toast('✅ Đã nhập!');switchTab('adm');}catch{toast('❌ File lỗi');}};r.readAsText(f)};inp.click();}
+function resetAll(){if(confirm('Reset về mặc định?')){localStorage.removeItem('xg_accs_v3');localStorage.removeItem('xg_biz_v3');toast('✅ Đã reset');switchTab('adm');}}
+
+const saved=sessionStorage.getItem(SK);
+if(saved){try{CU=JSON.parse(saved);enterApp();}catch(e){}}
+loadRemote();
+</script>
+</body>
+</html>

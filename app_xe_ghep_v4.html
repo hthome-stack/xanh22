@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Xe Ghép Tiện Chuyến — App Lái Xe (Online)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --blue:#1a56db;--blue-lt:#e8f0fe;--blue-md:#4285f4;
+  --green:#16a34a;--green-lt:#dcfce7;
+  --red:#dc2626;--red-lt:#fee2e2;
+  --orange:#ea580c;--orange-lt:#ffedd5;
+  --purple:#7c3aed;--purple-lt:#ede9fe;
+  --gray:#6b7280;--gray-lt:#f9fafb;--gray-bd:#e5e7eb;
+  --text:#111827;--text2:#6b7280;--white:#fff;
+  --r:12px;--rs:8px;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif
+}
+body{font-family:var(--font);background:#f1f5f9;color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* LOGIN */
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;background:linear-gradient(135deg,#1a56db 0%,#7c3aed 100%)}
+.login-logo{font-size:48px;margin-bottom:8px}
+.login-title{color:#fff;font-size:24px;font-weight:700;margin-bottom:4px}
+.login-sub{color:rgba(255,255,255,.7);font-size:14px;margin-bottom:32px}
+.login-card{background:#fff;border-radius:20px;padding:24px;width:100%;max-width:360px}
+.login-card h2{font-size:17px;font-weight:600;margin-bottom:16px;text-align:center}
+.driver-btn{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1.5px solid var(--gray-bd);border-radius:var(--r);margin-bottom:10px;cursor:pointer;background:#fff;width:100%;transition:all .15s}
+.driver-btn:active{background:var(--gray-lt)}
+.driver-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0}
+.driver-info{flex:1;text-align:left}
+.driver-name{font-weight:600;font-size:15px}
+.driver-sub{font-size:12px;color:var(--text2)}
+.pin-wrap{margin-top:8px}
+.pin-label{font-size:13px;color:var(--text2);margin-bottom:8px}
+.pin-dots{display:flex;gap:12px;justify-content:center;margin-bottom:16px}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--gray-bd);transition:all .2s}
+.pin-dot.filled{background:var(--blue);border-color:var(--blue)}
+.pin-dot.error{background:var(--red);border-color:var(--red)}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.num-btn{padding:16px;border-radius:var(--rs);font-size:20px;font-weight:500;border:1.5px solid var(--gray-bd);background:#fff;cursor:pointer;text-align:center;transition:all .15s}
+.num-btn:active{background:var(--blue-lt);border-color:var(--blue)}
+.num-btn.del{font-size:18px;color:var(--red)}
+.btn-back-pin{width:100%;padding:12px;border:none;background:none;color:var(--text2);font-size:14px;cursor:pointer;margin-top:8px}
+
+/* MAIN APP */
+#app{display:none}
+.topbar{background:var(--blue);color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.tb-left .tb-sub{font-size:11px;opacity:.75}
+.tb-left .tb-title{font-size:16px;font-weight:600}
+.tb-right{display:flex;align-items:center;gap:8px}
+.xe-badge{background:rgba(255,255,255,.2);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:600}
+.logout-btn{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer}
+
+.tabs{display:flex;background:#fff;border-bottom:1.5px solid var(--gray-bd);position:sticky;top:57px;z-index:99;overflow-x:auto}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1;min-width:64px;padding:11px 6px;text-align:center;font-size:12px;font-weight:500;color:var(--gray);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+.page{display:none;padding:14px;animation:fi .2s ease}
+.page.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* Cards */
+.card{background:#fff;border-radius:var(--r);border:1px solid var(--gray-bd);padding:15px;margin-bottom:12px}
+.card-hd{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.card-hd .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Fields */
+.field{margin-bottom:13px}
+.field label{display:block;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:11px 13px;border:1.5px solid var(--gray-bd);border-radius:var(--rs);font-size:15px;color:var(--text);background:#fff;-webkit-appearance:none;appearance:none;font-family:var(--font)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.1)}
+.field .unit{position:relative}
+.field .unit input{padding-right:44px}
+.field .unit span{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--gray);pointer-events:none;font-weight:500}
+.field textarea{min-height:64px;resize:none;line-height:1.5}
+
+/* Autocomplete */
+.ac-wrap{position:relative}
+.ac-drop{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--blue);border-top:none;border-radius:0 0 var(--rs) var(--rs);max-height:200px;overflow-y:auto;z-index:50;display:none}
+.ac-item{padding:11px 13px;font-size:14px;cursor:pointer;border-bottom:1px solid var(--gray-bd)}
+.ac-item:last-child{border-bottom:none}
+.ac-item:active,.ac-item:hover{background:var(--blue-lt)}
+.ac-item em{color:var(--blue);font-style:normal;font-weight:600}
+.ac-item .ac-province{font-size:11px;color:var(--gray);margin-top:1px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* Chips */
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.chip{padding:7px 13px;border-radius:20px;font-size:13px;font-weight:500;border:1.5px solid var(--gray-bd);color:var(--text2);cursor:pointer;background:#fff;user-select:none;transition:all .15s}
+.chip.s-blue{background:var(--blue);border-color:var(--blue);color:#fff}
+.chip.s-green{background:var(--green);border-color:var(--green);color:#fff}
+.chip.s-orange{background:var(--orange);border-color:var(--orange);color:#fff}
+
+/* Calc box */
+.calc{background:var(--blue-lt);border-radius:var(--rs);padding:13px;border:1px solid #c7d7f5;margin-top:2px}
+.cr{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:14px}
+.cr.div{border-top:1px dashed #c7d7f5;margin-top:6px;padding-top:9px}
+.cr.tot{font-weight:700;font-size:16px;color:var(--blue)}
+.cr.lx{color:var(--green);font-weight:600}
+.cr.xe-pct{color:var(--orange);font-weight:600}
+.cv{font-weight:600}
+
+/* Passenger section */
+.pax-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.pax-count{font-size:13px;font-weight:600;color:var(--blue);background:var(--blue-lt);padding:4px 10px;border-radius:20px}
+.pax-card{background:var(--gray-lt);border-radius:var(--rs);border:1px solid var(--gray-bd);padding:13px;margin-bottom:10px;position:relative}
+.pax-num{position:absolute;top:10px;right:10px;width:24px;height:24px;background:var(--blue);color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.pax-del{position:absolute;top:10px;right:42px;width:24px;height:24px;background:var(--red-lt);color:var(--red);border-radius:50%;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none}
+.pax-total-row{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;background:var(--green-lt);border-radius:var(--rs);border:1px solid #bbf7d0;margin-top:4px;font-size:14px;font-weight:600}
+
+.add-pax-btn{width:100%;padding:12px;border:2px dashed var(--blue);border-radius:var(--rs);background:var(--blue-lt);color:var(--blue);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px}
+
+/* Buttons */
+.btn{width:100%;padding:15px;border-radius:var(--rs);font-size:15px;font-weight:600;border:none;cursor:pointer;transition:all .15s;font-family:var(--font)}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:active{background:#1248b3;transform:scale(.98)}
+.btn-success{background:var(--green);color:#fff}
+.btn-success:active{background:#15803d;transform:scale(.98)}
+.btn-outline{background:#fff;color:var(--text);border:1.5px solid var(--gray-bd)}
+.btn-danger{background:var(--red);color:#fff}
+.btn-sm{padding:9px 16px;font-size:13px;width:auto}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e293b;color:#fff;padding:12px 22px;border-radius:24px;font-size:14px;font-weight:500;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Stats */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stat-card{background:#fff;border-radius:var(--rs);border:1px solid var(--gray-bd);padding:13px}
+.stat-lbl{font-size:11px;color:var(--gray);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.stat-val{font-size:21px;font-weight:700;margin-top:3px;line-height:1.1}
+
+/* List */
+.trip-item{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--gray-lt)}
+.trip-item:last-child{border-bottom:none}
+.trip-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.trip-body{flex:1;min-width:0}
+.trip-title{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trip-sub{font-size:12px;color:var(--text2);margin-top:2px;line-height:1.4}
+.trip-right{text-align:right;flex-shrink:0}
+.trip-amt{font-size:15px;font-weight:700;color:var(--blue)}
+.trip-lx{font-size:11px;color:var(--green);font-weight:500;margin-top:2px}
+
+/* Export */
+.exp-area{background:#0f172a;border-radius:var(--rs);padding:13px;overflow-x:auto}
+.exp-area pre{color:#86efac;font-size:10px;font-family:'Courier New',monospace;white-space:pre;line-height:1.6}
+.section-lbl{font-size:11px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.07em;margin:14px 0 7px}
+.empty-state{text-align:center;padding:36px 20px;color:var(--gray)}
+.empty-state .ei{font-size:44px;margin-bottom:10px}
+.empty-state p{font-size:14px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="login-logo">🚗</div>
+  <div class="login-title">Xe Ghép Tiện Chuyến</div>
+  <div class="login-sub">Ứng dụng quản lý chuyến xe</div>
+  <div class="login-card" id="loginCard">
+    <h2>Chọn lái xe</h2>
+    <div id="driverList"></div>
+    <button class="btn btn-outline" style="margin-top:8px;font-size:13px" onclick="showAdminSetup()">⚙️ Cài đặt / Quản trị</button>
+  </div>
+
+  <!-- PIN Entry -->
+  <div class="login-card" id="pinCard" style="display:none">
+    <h2 id="pinTitle">Nhập mã PIN</h2>
+    <div class="pin-wrap">
+      <div class="pin-dots" id="pinDots">
+        <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+        <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
+        <div class="pin-dot" id="pd4"></div><div class="pin-dot" id="pd5"></div>
+      </div>
+      <div class="numpad">
+        <button class="num-btn" onclick="pinNum('1')">1</button><button class="num-btn" onclick="pinNum('2')">2</button><button class="num-btn" onclick="pinNum('3')">3</button>
+        <button class="num-btn" onclick="pinNum('4')">4</button><button class="num-btn" onclick="pinNum('5')">5</button><button class="num-btn" onclick="pinNum('6')">6</button>
+        <button class="num-btn" onclick="pinNum('7')">7</button><button class="num-btn" onclick="pinNum('8')">8</button><button class="num-btn" onclick="pinNum('9')">9</button>
+        <button class="num-btn" onclick="pinNum('0')">0</button><button class="num-btn del" onclick="pinDel()">⌫</button><button class="num-btn" onclick="pinClear()" style="font-size:14px">✕</button>
+      </div>
+      <button class="btn-back-pin" onclick="backToDriverList()">← Chọn lái xe khác</button>
+    </div>
+  </div>
+
+  <!-- Admin setup -->
+  <div class="login-card" id="adminCard" style="display:none;max-width:400px">
+    <h2>⚙️ Cài đặt lái xe & xe</h2>
+    <div id="adminDrivers"></div>
+    <button class="btn btn-primary btn-sm" onclick="addDriverSetup()" style="margin-bottom:8px">+ Thêm lái xe</button>
+    <button class="btn btn-outline btn-sm" onclick="saveAdminSetup()">Lưu & Đóng</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="tb-sub" id="tbSub">Lái xe</div>
+      <div class="tb-title" id="tbTitle">Nhập Chuyến</div>
+    </div>
+    <div class="tb-right">
+      <div class="xe-badge" id="tbXe">Xe 1</div>
+      <button class="logout-btn" onclick="logout()">Đăng xuất</button>
+    </div>
+  </div>
+
+  <div id="syncBadge" onclick="bootSync()" style="font-size:11px;text-align:center;padding:5px;background:#e8f0fe;color:#1a56db;cursor:pointer">⏳ Đang kết nối Google Sheet...</div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('nhap')">✏️ Nhập</div>
+    <div class="tab" onclick="switchTab('ds')">📋 Danh sách</div>
+    <div class="tab" onclick="switchTab('tong')">📊 Thống kê</div>
+    <div class="tab" onclick="switchTab('xuat')">📤 Xuất</div>
+  </div>
+
+  <!-- TAB NHẬP CHUYẾN -->
+  <div class="page active" id="tab-nhap">
+
+    <!-- THÔNG TIN CHUYẾN -->
+    <div class="card">
+      <div class="card-hd"><div class="dot" style="background:var(--blue)"></div>THÔNG TIN CHUYẾN</div>
+      <div class="grid2">
+        <div class="field"><label>Ngày</label><input type="date" id="f-ngay"></div>
+        <div class="field"><label>Xe</label>
+          <select id="f-xe" onchange="updateXeInfo()">
+            <option value="">-- Chọn xe --</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Lượt</label>
+        <div class="chips" id="chips-luot">
+          <div class="chip" data-v="Đi" onclick="selChip(this,'luot')">Đi</div>
+          <div class="chip" data-v="Về" onclick="selChip(this,'luot')">Về</div>
+          <div class="chip" data-v="Bao 1 chiều" onclick="selChip(this,'luot')">Bao 1C</div>
+          <div class="chip" data-v="Bao 2 chiều" onclick="selChip(this,'luot')">Bao 2C</div>
+        </div>
+      </div>
+      <div class="field"><label>Loại cuốc xe</label>
+        <div class="chips" id="chips-cuoc">
+          <div class="chip" data-v="Ghép" onclick="selChip(this,'cuoc')">Ghép</div>
+          <div class="chip" data-v="Hợp đồng" onclick="selChip(this,'cuoc')">Hợp đồng</div>
+          <div class="chip" data-v="Taxi" onclick="selChip(this,'cuoc')">Taxi</div>
+          <div class="chip" data-v="Bao xe" onclick="selChip(this,'cuoc')">Bao xe</div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Phí cầu đường (đ)</label><input type="number" id="f-cau" placeholder="0" inputmode="numeric" oninput="recalc()"></div>
+        <div class="field"><label>CP phát sinh (đ)</label><input type="number" id="f-cpps" placeholder="0" inputmode="numeric" oninput="recalc()"></div>
+      </div>
+      <div class="field"><label>Ghi chú chuyến</label><textarea id="f-ghichu" placeholder="Ghi chú..."></textarea></div>
+    </div>
+
+    <!-- KHÁCH HÀNG -->
+    <div class="card">
+      <div class="card-hd"><div class="dot" style="background:var(--green)"></div>
+        <span>KHÁCH HÀNG</span>
+        <div class="pax-count" id="paxCount">0 khách</div>
+      </div>
+      <div id="paxList"></div>
+      <div class="pax-total-row" id="paxTotal" style="display:none">
+        <span>Tổng tiền vé:</span>
+        <span id="paxTotalAmt" style="color:var(--green)">0 đ</span>
+      </div>
+      <button class="add-pax-btn" onclick="addPax()" id="addPaxBtn">
+        ＋ Thêm khách hàng
+      </button>
+    </div>
+
+    <!-- TỔNG KẾT CHUYẾN -->
+    <div class="card">
+      <div class="card-hd"><div class="dot" style="background:var(--orange)"></div>TỔNG KẾT CHUYẾN</div>
+      <div class="calc" id="calcBox">
+        <div class="cr"><span style="color:var(--text2)">Tổng tiền vé</span><span class="cv" id="c-dt">0 đ</span></div>
+        <div class="cr"><span style="color:var(--text2)">− Mua khách (CK)</span><span class="cv" id="c-mk" style="color:var(--red)">0 đ</span></div>
+        <div class="cr"><span style="color:var(--text2)">− Cầu đường</span><span class="cv" id="c-cau" style="color:var(--red)">0 đ</span></div>
+        <div class="cr"><span style="color:var(--text2)">− CP phát sinh</span><span class="cv" id="c-cpps" style="color:var(--red)">0 đ</span></div>
+        <div class="cr div tot"><span>= DT thuần</span><span id="c-thuan">0 đ</span></div>
+        <div class="cr lx"><span>Lương lái xe (40%)</span><span id="c-lx">0 đ</span></div>
+        <div class="cr xe-pct"><span>Doanh thu xe (60%)</span><span id="c-xe">0 đ</span></div>
+      </div>
+    </div>
+
+    <button class="btn btn-success" onclick="saveChuyen()" style="margin-bottom:10px">✅ Lưu chuyến xe</button>
+    <button class="btn btn-outline" onclick="resetForm()">🔄 Nhập chuyến mới</button>
+  </div>
+
+  <!-- TAB DANH SÁCH -->
+  <div class="page" id="tab-ds">
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <select id="fl-xe" onchange="renderDS()" style="flex:1;padding:9px;border:1.5px solid var(--gray-bd);border-radius:var(--rs);font-size:13px;background:#fff">
+        <option value="">Tất cả xe</option>
+      </select>
+      <select id="fl-ngay" onchange="renderDS()" style="flex:1;padding:9px;border:1.5px solid var(--gray-bd);border-radius:var(--rs);font-size:13px;background:#fff">
+        <option value="">Tất cả ngày</option>
+      </select>
+    </div>
+    <div id="dsList"></div>
+  </div>
+
+  <!-- TAB THỐNG KÊ -->
+  <div class="page" id="tab-tong">
+    <div class="stat-grid" id="statGrid"></div>
+    <div class="section-lbl">Theo tuyến đường (Top 8)</div>
+    <div class="card" id="statTuyen"></div>
+  </div>
+
+  <!-- TAB XUẤT -->
+  <div class="page" id="tab-xuat">
+    <div class="card">
+      <div class="card-hd"><div class="dot" style="background:var(--blue)"></div>XUẤT DỮ LIỆU → EXCEL</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px">Sao chép CSV rồi dán vào sheet <strong>DATA_Khach</strong> trong file Excel V3.</p>
+      <button class="btn btn-primary" onclick="copyCSV('khach')" style="margin-bottom:8px">📋 Sao chép CSV Khách hàng</button>
+      <button class="btn btn-outline" onclick="copyCSV('chuyen')" style="margin-bottom:8px">📋 Sao chép CSV Chuyến xe</button>
+      <button class="btn btn-outline" onclick="downloadAll()">⬇️ Tải cả 2 file CSV</button>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="dot" style="background:var(--gray)"></div>XEM TRƯỚC (5 DÒNG CUỐI)</div>
+      <div class="exp-area"><pre id="csvPreview">Chưa có dữ liệu</pre></div>
+    </div>
+    <div class="card" style="border-color:#fca5a5;margin-top:12px">
+      <div class="card-hd" style="color:var(--red)"><div class="dot" style="background:var(--red)"></div>XOÁ DỮ LIỆU</div>
+      <button class="btn btn-danger" onclick="confirmDelete()">🗑️ Xoá tất cả — sau khi đã xuất Excel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DB='xg_trips_v2',CFG='xg_config_v2',SESS='xg_session_v2';
+
+// ═══ ĐỒNG BỘ GOOGLE SHEET ═══════════════════════════════════════
+// DÁN link Web App (Apps Script) vào dòng dưới — xem HUONG_DAN_CAI_DAT.md
+const API_URL='https://script.google.com/macros/s/AKfycbyW2xacmXfcJayMgme1XyFUIuOkXhzhoWZY_vfAKv8JNq8O7Pw3xnKAPlb8-fLDlJU/exec';
+const PENDING='xg_pending_v4';
+let syncing=false;
+function apiReady(){return API_URL.indexOf('https://')===0}
+async function apiGet(action){
+  const r=await fetch(API_URL+'?action='+action);
+  const j=await r.json();
+  if(!j.ok)throw new Error(j.error||'API lỗi');
+  return j;
+}
+async function apiPost(payload){
+  const r=await fetch(API_URL,{method:'POST',body:JSON.stringify(payload)});
+  const j=await r.json();
+  if(!j.ok)throw new Error(j.error||'API lỗi');
+  return j;
+}
+function getPending(){return JSON.parse(localStorage.getItem(PENDING)||'[]')}
+function setPending(a){localStorage.setItem(PENDING,JSON.stringify(a))}
+function setSync(state,msg){
+  const b=document.getElementById('syncBadge');if(!b)return;
+  b.textContent=msg;
+  const c={ok:['#dcfce7','#16a34a'],busy:['#e8f0fe','#1a56db'],err:['#ffedd5','#ea580c']}[state]||['#fee2e2','#dc2626'];
+  b.style.background=c[0];b.style.color=c[1];
+}
+async function flushPending(){
+  if(!apiReady()||syncing)return;
+  let q=getPending();
+  if(!q.length){setSync('ok','☁️ Đã đồng bộ Google Sheet');return}
+  syncing=true;setSync('busy','⏳ Đang gửi '+q.length+' chuyến...');
+  while(q.length){
+    try{await apiPost({action:'addTrip',trip:q[0]});q.shift();setPending(q);}
+    catch(e){break}
+  }
+  syncing=false;q=getPending();
+  setSync(q.length?'err':'ok',q.length?('📴 Chưa gửi được '+q.length+' chuyến — bấm để thử lại'):'☁️ Đã đồng bộ Google Sheet');
+}
+async function bootSync(){
+  if(!apiReady()){setSync('err','⚠️ Chưa cấu hình API_URL — xem hướng dẫn cài đặt');return}
+  setSync('busy','⏳ Đang tải dữ liệu...');
+  try{
+    const j=await apiGet('boot');
+    if(j.config&&j.config.drivers&&j.config.drivers.length){cfg=j.config;saveCfg();}
+    if(Array.isArray(j.trips)){trips=j.trips;saveTrips();}
+    renderDriverList();
+    if(session)initForm();
+    setSync('ok','☁️ Đã đồng bộ Google Sheet');
+  }catch(e){setSync('err','📴 Offline — đang dùng dữ liệu trên máy, bấm để thử lại')}
+  flushPending();
+}
+// ════════════════════════════════════════════════════════════════
+
+const LOCATIONS=[
+  "Bến xe Tuyên Quang|Tuyên Quang","Bệnh viện Đa khoa Tuyên Quang|Tuyên Quang","Trường ĐH Tân Trào|Tuyên Quang",
+  "UBND tỉnh Tuyên Quang|Tuyên Quang","Chợ Tam Cờ TQ|Tuyên Quang","Phường Minh Xuân|Tuyên Quang",
+  "Phường Tân Quang|Tuyên Quang","Phường Phan Thiết|Tuyên Quang","Xã An Khang|Tuyên Quang",
+  "Xã Lưỡng Vượng|Tuyên Quang","Huyện Sơn Dương|Tuyên Quang","Huyện Yên Sơn|Tuyên Quang",
+  "Huyện Hàm Yên|Tuyên Quang","Huyện Chiêm Hoá|Tuyên Quang","Huyện Na Hang|Tuyên Quang",
+  "Bến xe Hà Giang|Hà Giang","Bệnh viện Đa khoa Hà Giang|Hà Giang","TP Hà Giang|Hà Giang",
+  "Huyện Đồng Văn|Hà Giang","Huyện Mèo Vạc|Hà Giang","Huyện Yên Minh|Hà Giang","Sa Pa|Lào Cai",
+  "Bến xe Việt Trì|Phú Thọ","Bệnh viện Đa khoa Phú Thọ|Phú Thọ","Trường ĐH Hùng Vương|Phú Thọ",
+  "TP Việt Trì|Phú Thọ","Huyện Phù Ninh|Phú Thọ","Huyện Lâm Thao|Phú Thọ","Huyện Đoan Hùng|Phú Thọ",
+  "Bến xe Vĩnh Yên|Vĩnh Phúc","TP Vĩnh Yên|Vĩnh Phúc","Huyện Bình Xuyên|Vĩnh Phúc",
+  "Huyện Tam Dương|Vĩnh Phúc","Thị xã Phúc Yên|Vĩnh Phúc","KCN Bình Xuyên|Vĩnh Phúc",
+  "Bến xe Mỹ Đình|Hà Nội","Bến xe Giáp Bát|Hà Nội","Bến xe Nước Ngầm|Hà Nội",
+  "Bến xe Gia Lâm|Hà Nội","Bến xe Yên Nghĩa|Hà Nội","Ga Hà Nội|Hà Nội","Sân bay Nội Bài|Hà Nội",
+  "BV Bạch Mai|Hà Nội","BV Việt Đức|Hà Nội","BV K Tân Triều|Hà Nội","BV Nhi TW|Hà Nội",
+  "BV Phụ sản TW|Hà Nội","BV 108|Hà Nội","BV 103 Hà Đông|Hà Nội","BV Đức Giang|Hà Nội",
+  "ĐH Bách Khoa HN|Hà Nội","ĐH Kinh tế QD|Hà Nội","ĐH Nông nghiệp HN|Hà Nội",
+  "ĐH Thuỷ lợi HN|Hà Nội","ĐH Giao thông HN|Hà Nội","ĐH Xây dựng HN|Hà Nội",
+  "ĐH Quốc gia HN|Hà Nội","ĐH FPT Hoà Lạc|Hà Nội","Học viện Nông nghiệp|Hà Nội",
+  "Quận Cầu Giấy|Hà Nội","Quận Đống Đa|Hà Nội","Quận Hoàn Kiếm|Hà Nội",
+  "Quận Hai Bà Trưng|Hà Nội","Quận Hoàng Mai|Hà Nội","Quận Thanh Xuân|Hà Nội",
+  "Quận Nam Từ Liêm|Hà Nội","Quận Bắc Từ Liêm|Hà Nội","Quận Long Biên|Hà Nội",
+  "Quận Hà Đông|Hà Nội","Huyện Gia Lâm HN|Hà Nội","Huyện Đông Anh HN|Hà Nội",
+  "Bến xe Thái Nguyên|Thái Nguyên","BV TW Thái Nguyên|Thái Nguyên","ĐH Thái Nguyên|Thái Nguyên",
+  "TP Thái Nguyên|Thái Nguyên","Huyện Phú Lương|Thái Nguyên","Huyện Đại Từ|Thái Nguyên",
+  "Bến xe Bắc Ninh|Bắc Ninh","TP Bắc Ninh|Bắc Ninh","Huyện Từ Sơn|Bắc Ninh",
+  "Samsung Yên Phong|Bắc Ninh","KCN Quế Võ|Bắc Ninh","KCN Tiên Sơn|Bắc Ninh",
+  "Bến xe Bắc Giang|Bắc Giang","TP Bắc Giang|Bắc Giang","Huyện Lạng Giang|Bắc Giang",
+  "KCN Vân Trung|Bắc Giang","Bến xe Hưng Yên|Hưng Yên","TP Hưng Yên|Hưng Yên",
+  "Bến xe Hải Dương|Hải Dương","TP Hải Dương|Hải Dương","TP Hải Phòng|Hải Phòng",
+  "Bến xe Tam Bạc HP|Hải Phòng","Sân bay Cát Bi HP|Hải Phòng",
+  "TP Hạ Long|Quảng Ninh","Bến xe Bãi Cháy|Quảng Ninh","TP Móng Cái|Quảng Ninh",
+  "TP Lạng Sơn|Lạng Sơn","Cửa khẩu Hữu Nghị|Lạng Sơn",
+  "TP Cao Bằng|Cao Bằng","Bến xe Cao Bằng|Cao Bằng",
+  "TP Nam Định|Nam Định","TP Thái Bình|Thái Bình","TP Hoà Bình|Hoà Bình",
+  "TP Ninh Bình|Ninh Bình","Tràng An|Ninh Bình","TP Phủ Lý|Hà Nam",
+  "TP Yên Bái|Yên Bái","Thị xã Nghĩa Lộ|Yên Bái","TP Lào Cai|Lào Cai",
+  "TP Sơn La|Sơn La","Huyện Mộc Châu|Sơn La","TP Lai Châu|Lai Châu"
+];
+
+// ─── Config (drivers/cars) ────────────────────────────────────────
+let cfg=JSON.parse(localStorage.getItem(CFG)||'{"drivers":[],"cars":[]}');
+if(!cfg.cars||!cfg.cars.length)cfg={
+    drivers:[
+      {id:1,name:'Đặng Minh Hiếu',phone:'0912345678',pin:'1111',car:'Xe 1',bks:'22H202555'},
+      {id:2,name:'Trần Trường Giang',phone:'0936123456',pin:'2222',car:'Xe 2',bks:'22H02470'},
+      {id:3,name:'Trần Quốc Bình',phone:'0978456789',pin:'3333',car:'Xe 1',bks:'22H202555'},
+    ],
+    cars:['Xe 1 (22H202555)','Xe 2 (22H02470)']
+  };
+let trips=JSON.parse(localStorage.getItem(DB)||'[]');
+let session=JSON.parse(sessionStorage.getItem(SESS)||'null');
+let chips={luot:'',cuoc:''};
+let paxes=[]; // array of passenger objects
+let pinEntry='';let pinDriver=null;
+
+function saveCfg(){localStorage.setItem(CFG,JSON.stringify(cfg))}
+function saveTrips(){localStorage.setItem(DB,JSON.stringify(trips))}
+
+// ─── LOGIN ─────────────────────────────────────────────────────────
+function renderDriverList(){
+  const el=document.getElementById('driverList');
+  el.innerHTML=cfg.drivers.map(d=>`
+    <button class="driver-btn" onclick="selectDriver(${d.id})">
+      <div class="driver-avatar" style="background:${dColor(d.id)};color:#fff">${d.name[0]||'?'}</div>
+      <div class="driver-info">
+        <div class="driver-name">${d.name}</div>
+        <div class="driver-sub">${d.car||''} · PIN bảo vệ</div>
+      </div>
+      <span style="font-size:20px;color:var(--gray)">›</span>
+    </button>`).join('')||'<p style="font-size:13px;color:var(--gray);text-align:center;padding:16px">Chưa có lái xe nào. Nhấn "Cài đặt" để thêm.</p>';
+}
+function dColor(id){const cs=['#1a56db','#16a34a','#ea580c','#7c3aed','#dc2626','#0891b2'];return cs[(id-1)%cs.length]}
+function selectDriver(id){
+  pinDriver=cfg.drivers.find(d=>d.id===id);
+  if(!pinDriver)return;
+  document.getElementById('pinTitle').textContent=`Xin chào, ${pinDriver.name}`;
+  document.getElementById('loginCard').style.display='none';
+  document.getElementById('pinCard').style.display='block';
+  pinEntry='';updatePinDots();
+}
+function backToDriverList(){
+  document.getElementById('pinCard').style.display='none';
+  document.getElementById('loginCard').style.display='block';
+  pinEntry='';pinDriver=null;
+}
+function pinNum(n){
+  if(pinEntry.length>=6)return;
+  pinEntry+=n;updatePinDots();
+  if(pinEntry.length>=(pinDriver.pin||'').length)setTimeout(checkPin,200);
+}
+function pinDel(){pinEntry=pinEntry.slice(0,-1);updatePinDots()}
+function pinClear(){pinEntry='';updatePinDots()}
+function updatePinDots(){
+  const len=(pinDriver?.pin||'').length||4;
+  for(let i=0;i<6;i++){
+    const d=document.getElementById('pd'+i);
+    d.style.display=i<len?'':'none';
+    d.classList.toggle('filled',i<pinEntry.length);
+    d.classList.remove('error');
+  }
+}
+function checkPin(){
+  if(pinEntry===(pinDriver.pin||'')){
+    session={driverId:pinDriver.id,driverName:pinDriver.name,car:pinDriver.car||cfg.cars[0]||'Xe 1'};
+    sessionStorage.setItem(SESS,JSON.stringify(session));
+    enterApp();
+  } else {
+    document.querySelectorAll('.pin-dot').forEach(d=>{d.classList.add('error');d.classList.remove('filled')});
+    setTimeout(()=>{pinEntry='';updatePinDots();},700);
+    showToast('Sai PIN, thử lại!');
+  }
+}
+function enterApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('tbSub').textContent=session.driverName;
+  document.getElementById('tbXe').textContent=session.car;
+  document.getElementById('tbTitle').textContent='Nhập Chuyến';
+  initForm();
+}
+function logout(){
+  sessionStorage.removeItem(SESS);session=null;
+  document.getElementById('app').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('loginCard').style.display='block';
+  document.getElementById('pinCard').style.display='none';
+  document.getElementById('adminCard').style.display='none';
+}
+
+// Admin setup
+function showAdminSetup(){
+  document.getElementById('loginCard').style.display='none';
+  document.getElementById('adminCard').style.display='block';
+  renderAdminDrivers();
+}
+function renderAdminDrivers(){
+  const el=document.getElementById('adminDrivers');
+  el.innerHTML=cfg.drivers.map((d,i)=>`
+    <div style="border:1px solid var(--gray-bd);border-radius:var(--rs);padding:10px;margin-bottom:8px">
+      <div class="grid2" style="gap:6px;margin-bottom:6px">
+        <input placeholder="Họ tên" value="${d.name}" oninput="cfg.drivers[${i}].name=this.value" style="padding:8px;border:1px solid var(--gray-bd);border-radius:6px;font-size:13px;width:100%">
+        <input placeholder="PIN (4-6 số)" value="${d.pin}" oninput="cfg.drivers[${i}].pin=this.value" style="padding:8px;border:1px solid var(--gray-bd);border-radius:6px;font-size:13px;width:100%" type="tel">
+      </div>
+      <div class="grid2" style="gap:6px">
+        <input placeholder="SĐT" value="${d.phone||''}" oninput="cfg.drivers[${i}].phone=this.value" style="padding:8px;border:1px solid var(--gray-bd);border-radius:6px;font-size:13px;width:100%" type="tel">
+        <input placeholder="Xe thường lái" value="${d.car||''}" oninput="cfg.drivers[${i}].car=this.value" style="padding:8px;border:1px solid var(--gray-bd);border-radius:6px;font-size:13px;width:100%">
+      </div>
+    </div>`).join('');
+}
+function addDriverSetup(){
+  const newId=Date.now();
+  cfg.drivers.push({id:newId,name:'',phone:'',pin:'',car:''});
+  renderAdminDrivers();
+}
+function saveAdminSetup(){
+  cfg.drivers=cfg.drivers.filter(d=>d.name.trim());
+  saveCfg();showToast('✅ Đã lưu cài đặt!');
+  if(apiReady())apiPost({action:'saveConfig',config:cfg})
+    .then(()=>showToast('☁️ Đã đồng bộ cài đặt lên Google Sheet'))
+    .catch(()=>showToast('📴 Chưa gửi được lên Google Sheet — lưu tạm trên máy'));
+  document.getElementById('adminCard').style.display='none';
+  document.getElementById('loginCard').style.display='block';
+  renderDriverList();
+}
+
+// ─── FORM ──────────────────────────────────────────────────────────
+function initForm(){
+  document.getElementById('f-ngay').value=today();
+  const xeSel=document.getElementById('f-xe');
+  xeSel.innerHTML=cfg.cars.map(c=>`<option value="${c}">${c}</option>`).join('');
+  if(session?.car)xeSel.value=session.car;
+  renderPaxList();recalc();
+}
+function today(){return new Date().toISOString().split('T')[0]}
+
+function selChip(el,group){
+  document.querySelectorAll(`#chips-${group} .chip`).forEach(c=>c.className='chip');
+  el.classList.add(group==='luot'?'s-blue':'s-orange');
+  chips[group]=el.dataset.v;
+}
+
+// ─── PASSENGER ────────────────────────────────────────────────────
+function addPax(){
+  if(paxes.length>=10){showToast('Tối đa 10 khách/chuyến!');return}
+  paxes.push({name:'',phone:'',diemDon:'',diemTra:'',loai:'Khách đi',ve:0,muaKhach:0});
+  renderPaxList();
+}
+function removePax(i){paxes.splice(i,1);renderPaxList();recalc()}
+
+function renderPaxList(){
+  const el=document.getElementById('paxList');
+  const btn=document.getElementById('addPaxBtn');
+  const tot=document.getElementById('paxTotal');
+  document.getElementById('paxCount').textContent=paxes.length+(paxes.length===1?' khách':' khách');
+  btn.style.display=paxes.length>=10?'none':'flex';
+
+  if(!paxes.length){el.innerHTML='';tot.style.display='none';return}
+
+  el.innerHTML=paxes.map((p,i)=>`
+    <div class="pax-card">
+      <div class="pax-num">${i+1}</div>
+      <button class="pax-del" onclick="removePax(${i})">✕</button>
+      <div class="grid2" style="margin-bottom:8px;padding-right:56px">
+        <div class="field" style="margin:0"><label style="font-size:12px">Tên khách</label>
+          <input style="font-size:14px;padding:9px 11px" placeholder="Họ tên" value="${p.name}" oninput="paxes[${i}].name=this.value">
+        </div>
+        <div class="field" style="margin:0"><label style="font-size:12px">Số ĐT</label>
+          <input style="font-size:14px;padding:9px 11px" type="tel" placeholder="0xxx" value="${p.phone}" oninput="paxes[${i}].phone=this.value">
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:8px"><label style="font-size:12px">Điểm đón</label>
+        <div class="ac-wrap">
+          <input style="font-size:14px;padding:9px 11px" placeholder="Nhập hoặc chọn địa điểm..." value="${p.diemDon}" 
+            oninput="paxes[${i}].diemDon=this.value;acSearch(this,${i},'don')" autocomplete="off">
+          <div class="ac-drop" id="ac-don-${i}"></div>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:8px"><label style="font-size:12px">Điểm trả</label>
+        <div class="ac-wrap">
+          <input style="font-size:14px;padding:9px 11px" placeholder="Nhập hoặc chọn địa điểm..." value="${p.diemTra}"
+            oninput="paxes[${i}].diemTra=this.value;acSearch(this,${i},'tra')" autocomplete="off">
+          <div class="ac-drop" id="ac-tra-${i}"></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field" style="margin:0"><label style="font-size:12px">Loại khách</label>
+          <select style="font-size:13px;padding:9px 11px" onchange="paxes[${i}].loai=this.value">
+            ${['Khách đi','Khách về','Bao xe 1C','Bao xe 2C','Gửi hàng','Thuê xe'].map(v=>`<option${p.loai===v?' selected':''}>${v}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field" style="margin:0"><label style="font-size:12px">Tiền vé (đ)</label>
+          <input type="number" style="font-size:14px;padding:9px 11px" inputmode="numeric" placeholder="0" value="${p.ve||''}" oninput="paxes[${i}].ve=Number(this.value)||0;recalc()">
+        </div>
+      </div>
+      <div class="field" style="margin-top:8px;margin-bottom:0"><label style="font-size:12px">Tiền mua khách / chiết khấu (đ)</label>
+        <input type="number" style="font-size:14px;padding:9px 11px" inputmode="numeric" placeholder="0" value="${p.muaKhach||''}" oninput="paxes[${i}].muaKhach=Number(this.value)||0;recalc()">
+      </div>
+    </div>`).join('');
+
+  const sumVe=paxes.reduce((s,p)=>s+p.ve,0);
+  tot.style.display='flex';
+  document.getElementById('paxTotalAmt').textContent=fmt(sumVe);
+  recalc();
+}
+
+// ─── AUTOCOMPLETE ─────────────────────────────────────────────────
+function acSearch(input,paxIdx,field){
+  const q=input.value.toLowerCase().trim();
+  const dropId=`ac-${field}-${paxIdx}`;
+  const drop=document.getElementById(dropId);
+  if(!q||q.length<1){drop.style.display='none';return}
+  const results=LOCATIONS.filter(l=>l.toLowerCase().includes(q)).slice(0,8);
+  if(!results.length){drop.style.display='none';return}
+  drop.innerHTML=results.map(l=>{
+    const[name,province]=l.split('|');
+    const hi=name.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),m=>`<em>${m}</em>`);
+    return `<div class="ac-item" onmousedown="acSelect(event,'${name}',${paxIdx},'${field}')"><div>${hi}</div><div class="ac-province">${province}</div></div>`;
+  }).join('');
+  drop.style.display='block';
+}
+function acSelect(e,name,paxIdx,field){
+  e.preventDefault();
+  if(field==='don')paxes[paxIdx].diemDon=name;
+  else paxes[paxIdx].diemTra=name;
+  document.getElementById(`ac-${field}-${paxIdx}`).style.display='none';
+  renderPaxList();
+}
+document.addEventListener('click',()=>document.querySelectorAll('.ac-drop').forEach(d=>d.style.display='none'));
+
+// ─── CALC ─────────────────────────────────────────────────────────
+function recalc(){
+  const sumVe=paxes.reduce((s,p)=>s+p.ve,0);
+  const sumMK=paxes.reduce((s,p)=>s+p.muaKhach,0);
+  const cau=Number(document.getElementById('f-cau').value)||0;
+  const cpps=Number(document.getElementById('f-cpps').value)||0;
+  const totalCP=sumMK+cau+cpps;
+  const thuan=Math.max(0,sumVe-totalCP);
+  document.getElementById('c-dt').textContent=fmt(sumVe);
+  document.getElementById('c-mk').textContent=fmt(sumMK);
+  document.getElementById('c-cau').textContent=fmt(cau);
+  document.getElementById('c-cpps').textContent=fmt(cpps);
+  document.getElementById('c-thuan').textContent=fmt(thuan);
+  document.getElementById('c-lx').textContent=fmt(Math.round(thuan*0.4));
+  document.getElementById('c-xe').textContent=fmt(Math.round(thuan*0.6));
+}
+function fmt(n){return Number(n||0).toLocaleString('vi-VN')+'đ'}
+function fmtS(n){n=Number(n||0);if(n>=1e6)return(n/1e6).toFixed(1).replace(/\.0$/,'')+'tr';if(n>=1e3)return Math.round(n/1e3)+'k';return n+'đ'}
+
+// ─── SAVE ──────────────────────────────────────────────────────────
+function saveChuyen(){
+  if(!chips.luot){showToast('Chọn lượt: Đi hoặc Về!');return}
+  if(!chips.cuoc){showToast('Chọn loại cuốc xe!');return}
+  if(!paxes.length){showToast('Thêm ít nhất 1 khách!');return}
+  const sumVe=paxes.reduce((s,p)=>s+p.ve,0);
+  if(sumVe<=0){showToast('Nhập tiền vé > 0!');return}
+  const sumMK=paxes.reduce((s,p)=>s+p.muaKhach,0);
+  const cau=Number(document.getElementById('f-cau').value)||0;
+  const cpps=Number(document.getElementById('f-cpps').value)||0;
+  const totalCP=sumMK+cau+cpps;
+  const thuan=Math.max(0,sumVe-totalCP);
+  const trip={
+    id:Date.now(),tid:'XG-'+Date.now(),ngay:document.getElementById('f-ngay').value,
+    xe:document.getElementById('f-xe').value,bks:getBKS(),
+    laixe:session.driverName,luot:chips.luot,cuoc:chips.cuoc,
+    cau,cpps,totalCP,sumVe,sumMK,thuan,
+    luongLX:Math.round(thuan*0.4),dtXe:Math.round(thuan*0.6),
+    ghichu:document.getElementById('f-ghichu').value.trim(),
+    paxes:paxes.map(p=>({...p})),
+    createdAt:new Date().toISOString()
+  };
+  trips.push(trip);saveTrips();
+  const q=getPending();q.push(trip);setPending(q);
+  flushPending();
+  showToast('✅ Đã lưu chuyến thành công!');
+  updateCSVPreview();
+  setTimeout(resetForm,600);
+}
+function getBKS(){const d=cfg.drivers.find(d=>d.id===session.driverId);return d?.bks||d?.car||'';}
+function resetForm(){
+  paxes=[];chips={luot:'',cuoc:''};
+  document.querySelectorAll('.chip').forEach(c=>c.className='chip');
+  document.getElementById('f-cau').value='';document.getElementById('f-cpps').value='';
+  document.getElementById('f-ghichu').value='';document.getElementById('f-ngay').value=today();
+  renderPaxList();recalc();
+}
+
+// ─── LIST ──────────────────────────────────────────────────────────
+function renderDS(){
+  const fXe=document.getElementById('fl-xe').value;
+  const fNgay=document.getElementById('fl-ngay').value;
+  const sel=document.getElementById('fl-ngay');
+  const days=[...new Set(trips.map(t=>t.ngay))].sort().reverse();
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Tất cả ngày</option>';
+  days.forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=new Date(d+'T00:00').toLocaleDateString('vi-VN');if(d===cur)o.selected=true;sel.appendChild(o)});
+  // populate xe filter
+  const xeSel=document.getElementById('fl-xe');
+  const curXe=xeSel.value;
+  xeSel.innerHTML='<option value="">Tất cả xe</option>';
+  cfg.cars.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;if(c===curXe)o.selected=true;xeSel.appendChild(o)});
+
+  let rows=[...trips].sort((a,b)=>new Date(b.ngay)-new Date(a.ngay));
+  if(fXe)rows=rows.filter(r=>r.xe===fXe);
+  if(fNgay)rows=rows.filter(r=>r.ngay===fNgay);
+  const el=document.getElementById('dsList');
+  if(!rows.length){el.innerHTML='<div class="empty-state"><div class="ei">📭</div><p>Chưa có chuyến nào.</p></div>';return}
+  const icons={Ghép:'🚐','Hợp đồng':'📋',Taxi:'🚕','Bao xe':'🔑'};
+  let html='';let lastDate='';
+  rows.forEach(r=>{
+    const dStr=new Date(r.ngay+'T00:00').toLocaleDateString('vi-VN',{weekday:'short',day:'2-digit',month:'2-digit'});
+    if(r.ngay!==lastDate){html+=`<div class="section-lbl">${dStr}</div>`;lastDate=r.ngay}
+    const paxSum=r.paxes?.map(p=>`${p.name||'?'} (${fmtS(p.ve)})`).slice(0,3).join(', ')||(r.paxes?.length||0)+'khách';
+    html+=`<div class="card" style="padding:12px;margin-bottom:8px">
+      <div class="trip-item" style="padding:0;border:none">
+        <div class="trip-icon" style="background:var(--blue-lt);color:var(--blue)">${icons[r.cuoc]||'🚗'}</div>
+        <div class="trip-body">
+          <div class="trip-title">${r.luot} · ${r.cuoc} · ${r.xe}</div>
+          <div class="trip-sub">👤 ${paxSum}</div>
+          <div class="trip-sub">🚗 ${r.laixe}</div>
+        </div>
+        <div class="trip-right">
+          <div class="trip-amt">${fmtS(r.sumVe)}</div>
+          <div class="trip-lx">LX: ${fmtS(r.luongLX)}</div>
+          <div style="font-size:11px;color:var(--orange);font-weight:500">Xe: ${fmtS(r.dtXe)}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  el.innerHTML=html;
+}
+
+// ─── STATS ────────────────────────────────────────────────────────
+function renderStats(){
+  const sumVe=trips.reduce((s,t)=>s+t.sumVe,0);
+  const sumTh=trips.reduce((s,t)=>s+t.thuan,0);
+  const sumLX=trips.reduce((s,t)=>s+t.luongLX,0);
+  const sumXe=trips.reduce((s,t)=>s+t.dtXe,0);
+  document.getElementById('statGrid').innerHTML=`
+    <div class="stat-card"><div class="stat-lbl">Tổng DT thô</div><div class="stat-val" style="color:var(--blue)">${fmtS(sumVe)}</div></div>
+    <div class="stat-card"><div class="stat-lbl">Số chuyến</div><div class="stat-val" style="color:var(--blue)">${trips.length}</div></div>
+    <div class="stat-card"><div class="stat-lbl">DT thuần</div><div class="stat-val" style="color:var(--green)">${fmtS(sumTh)}</div></div>
+    <div class="stat-card"><div class="stat-lbl">DT xe (60%)</div><div class="stat-val" style="color:var(--orange)">${fmtS(sumXe)}</div></div>
+    <div class="stat-card"><div class="stat-lbl">Lương LX</div><div class="stat-val" style="color:var(--purple)">${fmtS(sumLX)}</div></div>
+    <div class="stat-card"><div class="stat-lbl">Số khách</div><div class="stat-val" style="color:var(--blue)">${trips.reduce((s,t)=>s+(t.paxes?.length||1),0)}</div></div>
+  `;
+  // By route (from-to)
+  const byRoute={};
+  trips.forEach(t=>{
+    t.paxes?.forEach(p=>{
+      const key=`${p.diemDon||'?'} → ${p.diemTra||'?'}`;
+      if(!byRoute[key])byRoute[key]={ve:0,n:0};
+      byRoute[key].ve+=p.ve;byRoute[key].n++;
+    });
+  });
+  const sorted=Object.entries(byRoute).sort((a,b)=>b[1].ve-a[1].ve).slice(0,8);
+  document.getElementById('statTuyen').innerHTML=sorted.map(([r,v])=>`
+    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gray-lt);font-size:13px">
+      <span style="flex:1;padding-right:8px">${r}</span>
+      <span><strong>${fmtS(v.ve)}</strong> · ${v.n} khách</span>
+    </div>`).join('')||'<p style="font-size:13px;color:var(--gray);padding:8px 0">Chưa có dữ liệu</p>';
+}
+
+// ─── CSV EXPORT ───────────────────────────────────────────────────
+const KHACH_HDR='STT Chuyến,Ngày,Xe,Lái Xe,Tên Khách,SĐT,Điểm Đón,Điểm Trả,Loại Khách,Tiền Vé,Mua KH (CK),Ghi Chú';
+const TRIP_HDR='Ngày,Xe,BKS,Lái Xe,Lượt,Loại Cuốc,Phí Cầu Đường,CP Phát Sinh,Tổng DT Thô,Tổng Mua Khách,DT Thuần,Lương LX,DT Xe,Ghi Chú';
+function esc(v){const s=String(v||'');return s.includes(',')||s.includes('"')||s.includes('\n')?`"${s.replace(/"/g,'""')}"`:s}
+function getKhachCSV(){
+  const rows=[];let idx=1;
+  trips.forEach((t,ti)=>{
+    (t.paxes||[]).forEach(p=>{
+      rows.push([ti+1,t.ngay,t.xe,t.laixe,p.name,p.phone,p.diemDon,p.diemTra,p.loai,p.ve,p.muaKhach,t.ghichu].map(esc).join(','));
+    });
+    idx++;
+  });
+  return KHACH_HDR+'\n'+rows.join('\n');
+}
+function getTripCSV(){
+  return TRIP_HDR+'\n'+trips.map(t=>[t.ngay,t.xe,t.bks,t.laixe,t.luot,t.cuoc,t.cau,t.cpps,t.sumVe,t.sumMK,t.thuan,t.luongLX,t.dtXe,t.ghichu].map(esc).join(',')).join('\n');
+}
+function copyCSV(type){
+  if(!trips.length){showToast('Chưa có dữ liệu!');return}
+  const csv=type==='khach'?getKhachCSV():getTripCSV();
+  navigator.clipboard.writeText(csv).then(()=>showToast('✅ Đã sao chép! Dán vào Excel.')).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=csv;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('✅ Đã sao chép!');
+  });
+}
+function downloadAll(){
+  if(!trips.length){showToast('Chưa có dữ liệu!');return}
+  const d=new Date().toISOString().split('T')[0];
+  [['chuyen_xe_'+d+'.csv',getTripCSV()],['khach_hang_'+d+'.csv',getKhachCSV()]].forEach(([name,csv])=>{
+    const b=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);
+  });
+  showToast('⬇️ Đã tải 2 file CSV');
+}
+function updateCSVPreview(){
+  if(!trips.length){document.getElementById('csvPreview').textContent='Chưa có dữ liệu';return}
+  const rows=getKhachCSV().split('\n');
+  const preview=[rows[0],...rows.slice(-Math.min(5,rows.length-1))].join('\n');
+  document.getElementById('csvPreview').textContent=`(${trips.length} chuyến)\n\n`+preview;
+}
+function confirmDelete(){
+  if(!trips.length){showToast('Không có dữ liệu!');return}
+  if(confirm(`Xoá ${trips.length} chuyến trên MÁY NÀY? (Dữ liệu đã đồng bộ trên Google Sheet vẫn còn nguyên)`)){
+    trips=[];saveTrips();updateCSVPreview();renderStats();showToast('🗑️ Đã xoá trên máy! Google Sheet vẫn giữ nguyên.');
+  }
+}
+
+// ─── TABS ──────────────────────────────────────────────────────────
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach((el,i)=>{const ts=['nhap','ds','tong','xuat'];el.classList.toggle('active',ts[i]===t)});
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  if(t==='ds')renderDS();
+  if(t==='tong')renderStats();
+  if(t==='xuat')updateCSVPreview();
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)}
+function updateXeInfo(){document.getElementById('tbXe').textContent=document.getElementById('f-xe').value}
+
+// ─── INIT ──────────────────────────────────────────────────────────
+renderDriverList();
+if(session){enterApp()}
+bootSync();
+setInterval(flushPending,60000);
+</script>
+</body>
+</html>
